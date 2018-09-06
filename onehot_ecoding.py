@@ -42,9 +42,7 @@ def binary_to_raw(B, values_per_column):
             R[i][j] = column_value        
     return R        
 
-def validate_encoding():
-    B, values_per_column = raw_to_binary(df)
-    R = binary_to_raw(B, values_per_column)
+def validate_encoding(R, df):
     err_count = 0
     for i, row in enumerate(R):
         for j,col in enumerate(R[i]):
@@ -61,4 +59,8 @@ def validate_encoding():
     
 
 df = read_data('student_data/student-por.csv')
-validate_encoding()
+B, values_per_column = raw_to_binary(df)
+R = binary_to_raw(B, values_per_column)
+print(R[2])
+print(df.at[2,df.columns.values])
+validate_encoding(R, df)

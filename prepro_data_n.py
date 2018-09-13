@@ -30,14 +30,32 @@ def read_data(file):
 		for i, col in enumerate(labels):
 			new_data[index][i] = np.where(label_map[col] == student[col])[0]
 
+	decode_numeric(new_data, labels, label_map)
+
 	return new_data
 
-def decode_numeric(data, labels, labels_map):
+def decode_numeric(data, labels, label_map, print_data=False, save_data=False, filename=''):
 
-	for i in range(len(labels)):
-		print(labels[i])
-		print(label_map[labels[i]][new_data[0][i]]) 
+	if(print_data):
+		for i in range(len(labels)):
+			print(labels[i], end='\t')
 
+		print()
+
+		for i in range(len(data)):
+			for j in range(len(labels)):
+				print(label_map[labels[j]][data[i][j]], end='\t')
+			print() 
+	else:
+		df_data = pd.DataFrame(index=range(0,len(data)), columns=labels)
+		for i in range(len(data)):
+			for j in range(len(labels)):
+				df_data.at[i, labels[j]] = label_map[labels[j]][data[i][j]]
+
+		if(save_data):
+			df_data.to_csv(path_or_buf='data/' + filename , sep=';')
+		else:		
+			print(df_data)
 
 read_data('student-mat.csv')
 

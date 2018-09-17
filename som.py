@@ -70,13 +70,6 @@ class SOMNetwork:
 
 	def train(self, X, epochs):
 		for epoch in range(epochs):
-			# if(epoch%100 == 0):
-			# 	plt.plot(self.W.T[0], self.W.T[1],'go')
-			# 	plt.plot(X.T[0], X.T[1], 'bx')
-			# 	plt.plot(self.W.T[0], self.W.T[1],'ro')
-			# 	plt.plot(self.W.T[0], self.W.T[1],'-')
-			# 	plt.savefig('images/som'+str(epoch)+'.png')
-			# 	plt.close()
 			for i,x in enumerate(X):
 				winner = 0
 				winner_dist = 999999999

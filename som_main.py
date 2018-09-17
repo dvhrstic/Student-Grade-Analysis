@@ -19,5 +19,6 @@ def votes():
 			temp += 1
 	plt.imshow(grid / 255)
 	plt.show()
+	#hejhej
 
 votes()

@@ -50,23 +50,37 @@ def data_gen(num_samples, num_clusters, dim = 2):
 
 
 
-def expectation_maximization(X):
-	model = GaussianMixture()
-	db = DBSCAN(eps=1, min_samples=10).fit(X)
-	#core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
-	#core_samples_mask[db.core_sample_indices_] = True
+def expectation_maximization_DBSCAN(X):
+	db = DBSCAN(eps=0.5, min_samples=50).fit(X)
 	labels = db.labels_
 	n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
-	#print(db.get_params())
-	print("Number of clusters",len(set(labels)))
-	print("Number of clusters without noise", n_clusters_)
-	num_clusters = len(set(labels))
-	for i in range(num_clusters):
-		model.set_params(n_components=i+1)
+	print("---DBSCAN---")
+	print("---Number of clusters: ",len(set(labels)))
+	print("---Number of clusters without noise: ", n_clusters_)
+
+
+def elbow_method(X, model, num_clusters):
+	k_clusters = np.arange(1, num_clusters)
+	scores = []
+	for k in k_clusters:
+		model.set_params(n_components=k)
 		model.fit(X)
-		#print(model.get_params())
-		print(model.score(X))
+		scores.append(model.score(X))
+	plt.plot(k_clusters, scores)
+	plt.title('Elbow Method')
+	plt.xlabel('Number of clusters')
+	plt.ylabel('Scores')
+	plt.show()
+
+def main():
+	# Data generation
+	X = data_gen(num_samples=100, num_clusters=5)	
+	# EM Model initialization
+	model = GaussianMixture()
+	# Getting the optimal number of clusters with DBSCAN method
+	expectation_maximization_DBSCAN(X)
+	# Elbow method for different number of clusters
+	elbow_method(X,model, num_clusters=10)
 
 
-X = data_gen(num_samples=100, num_clusters=5)
-expectation_maximization(X)
+main()

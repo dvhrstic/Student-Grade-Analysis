@@ -44,8 +44,8 @@ class SOMNetwork:
 		rowNumber = 0
 		columnNumber = 0
 		radius = size
-		for i in range(10):
-			for j in range(10):
+		for i in range(5):
+			for j in range(5):
 				neighbourhood[i][j] = (count, self.W[count])
 				if(idx == count):
 					rowNumber = i + 1

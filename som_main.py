@@ -11,7 +11,7 @@ def test():
 	raw_data = raw_data / np.max(raw_data)
 
 	layer_dim = [5,5,3]
-	som = SOM.SOMNetwork(layer_dim, epochs=2000)
+	som = SOM.SOMNetwork(layer_dim, epochs=4000)
 
 	som.train(raw_data)
 	result = som.predict(raw_data)

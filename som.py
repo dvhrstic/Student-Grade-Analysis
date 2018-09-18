@@ -15,6 +15,7 @@ class SOMNetwork:
 		self.W = self.generate_weight(layers_dim)
 		self.epochs = epochs
 		self.radius = radius
+		self.radius_decrease_factor = 500
 
 	def generate_weight(self,layers_dim):
 		"""Initialize the SOM map
@@ -124,6 +125,7 @@ class SOMNetwork:
 					self.W[n[0]][n[1]] += self.learning_rate*np.subtract(x, self.W[n[0]][n[1]])
 
 			self.decay_learning_rate(epoch)
+			self.decay_radius(epoch)
 
 	def predict(self, X):
 		""" Predict the winning node for each data point after
@@ -168,4 +170,18 @@ class SOMNetwork:
 				as the number of iterations (epochs) increases
 		"""
 		self.learning_rate = self.learning_rate * np.exp(-epoch/self.epochs)
+
+	def decay_radius(self, epoch):
+		"""Decays the neighbourhood radius to
+		decrease the affected area once the map
+		gets closer to a solution
+
+		Parameters:
+			-----------
+			epochs : integer
+				used in the exp function so that the decay factor decreases
+				as the number of iterations (epochs) increases
+		"""
+		radius_float = self.radius * np.exp(-epoch/self.radius_decrease_factor)
+		self.radius = int(round(radius_float))
 	

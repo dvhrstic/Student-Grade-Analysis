@@ -4,10 +4,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 np.random.seed(9)
 
-""" TODO:
-	- fix decaying radius
-"""
-
 class SOMNetwork:
 	def __init__(self, layers_dim, epochs=1000, radius=2):
 		super(SOMNetwork, self).__init__()

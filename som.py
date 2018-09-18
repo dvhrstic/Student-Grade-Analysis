@@ -5,15 +5,16 @@ import matplotlib.pyplot as plt
 np.random.seed(9)
 
 """ TODO:
-	- fix decaying learning learning
 	- fix decaying radius
 """
 
 class SOMNetwork:
-	def __init__(self, layers_dim,cyclic = False, mp = False):
+	def __init__(self, layers_dim, epochs=1000, radius=2):
 		super(SOMNetwork, self).__init__()
-		self.learning_rate = 0.002
+		self.learning_rate = 0.01
 		self.W = self.generate_weight(layers_dim)
+		self.epochs = epochs
+		self.radius = radius
 
 	def generate_weight(self,layers_dim):
 		"""Initialize the SOM map
@@ -34,7 +35,7 @@ class SOMNetwork:
 		W = np.random.uniform(0,1,(nr_rows, nr_cols, input_dim))
 		return W
 
-	def get_neighbourhood(self, winner, radius):
+	def get_neighbourhood(self, winner):
 		""" Get the neigbourhood of winning node within
 		specified radius
 
@@ -55,12 +56,12 @@ class SOMNetwork:
 		nr_rows = self.W.shape[0]
 		nr_cols = self.W.shape[1]
 
-		row_span = np.arange(winner[0] - radius, winner[0] + radius + 1)
-		col_span = np.arange(winner[1] - radius, winner[1] + radius + 1)
+		row_span = np.arange(winner[0] - self.radius, winner[0] + self.radius + 1)
+		col_span = np.arange(winner[1] - self.radius, winner[1] + self.radius + 1)
 
 		neighbourhood = []
-		for i in range((2*radius) + 1):
-			for j in range((2*radius) + 1):
+		for i in range((2*self.radius) + 1):
+			for j in range((2*self.radius) + 1):
 				if((row_span[i] > (nr_rows - 1)) or (row_span[i] < 0) \
 					or (col_span[j] > (nr_cols - 1)) or (col_span[j] < 0)):
 					continue
@@ -69,7 +70,7 @@ class SOMNetwork:
 
 		return neighbourhood 
 
-	def get_winner(self, x, epochs, epoch):
+	def get_winner(self, x):
 		""" Get the winning node for an input
 
 		Parameters
@@ -77,7 +78,7 @@ class SOMNetwork:
 		x : 1 x m array
 			one input data point
 		epochs : integer
-			total number of epochs TODO: move into object instead
+			total number of epochs
 		epoch : integer
 			the current epoch
 		
@@ -99,18 +100,11 @@ class SOMNetwork:
 				if(distance < winner_dist):
 					winner = [i, j]
 					winner_dist = distance
-		
-		treshhold = epochs / 3
-		radius = 3
-		if(epoch > treshhold and epoch < 2*treshhold):
-			radius = 2
-		elif(epoch > 2*treshhold):
-			radius = 0 
 
-		return winner, radius
+		return winner
 
 
-	def train(self, X, epochs):
+	def train(self, X):
 		""" Update the SOM map to move the nodes towards
 		the input data
 
@@ -119,15 +113,17 @@ class SOMNetwork:
 		X : n x m array
 			the input data set
 		epochs : integer
-			number of epochs used for training TODO: move into SOM object instead
+			number of epochs used for training
 		"""
-		for epoch in range(epochs):
+		for epoch in range(self.epochs):
 			for x in X:
-				winner, radius = self.get_winner(x, epochs, epoch)
-				neighbourhood = self.get_neighbourhood(winner, radius)
+				winner = self.get_winner(x)
+				neighbourhood = self.get_neighbourhood(winner)
 					
 				for n in neighbourhood:
 					self.W[n[0]][n[1]] += self.learning_rate*np.subtract(x, self.W[n[0]][n[1]])
+
+			self.decay_learning_rate(epoch)
 
 	def predict(self, X):
 		""" Predict the winning node for each data point after
@@ -160,4 +156,16 @@ class SOMNetwork:
 			winners[i] = winner
 
 		return winners
+
+	def decay_learning_rate(self, epoch):
+		""" Decay the learning rate so that the SOM
+			settles for a solution
+
+			Parameters:
+			-----------
+			epochs : integer
+				used in the exp function so that the decay factor decreases
+				as the number of iterations (epochs) increases
+		"""
+		self.learning_rate = self.learning_rate * np.exp(-epoch/self.epochs)
 	

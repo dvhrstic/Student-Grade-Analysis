@@ -134,12 +134,12 @@ class SOMNetwork:
 
 		Returns
 		-------
-		winners : n x 2 array
-			the coordinates of the winning node
-			for each input
+		winners : n x 3 array
+			studentID + the coordinates of the winning node Array([studentID, x, y])
+			for each input 
 		"""
-		winners = np.zeros((len(X), 2), dtype='int')
-		for i,x in enumerate(X):
+		winners = np.zeros((len(X), 3), dtype='int')
+		for i, x in enumerate(X):
 			winner = 0
 			winner_dist = 999999999
 			for j in range(len(self.W)):
@@ -148,7 +148,7 @@ class SOMNetwork:
 					distance = np.matmul(temp_distance.T,temp_distance)
 
 					if(distance < winner_dist):
-						winner = [j, k]
+						winner = [i, k, j]
 						winner_dist = distance
 
 			winners[i] = winner

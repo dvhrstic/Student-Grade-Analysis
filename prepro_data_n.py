@@ -30,7 +30,13 @@ def read_data(file):
 		for i, col in enumerate(labels):
 			new_data[index][i] = np.where(label_map[col] == student[col])[0]
 
-	decode_numeric(new_data, labels, label_map)
+	# decode_numeric(new_data, labels, label_map)
+	file_name = file[:-4]
+	# f = open("Student_data/" + file_name + ".bin","wb")
+	# np.save(f, new_data)
+
+	f = open("Student_data/" + file_name + ".bin","rb")
+	X = np.load(f)
 
 	return new_data
 

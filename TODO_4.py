@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 """
-    in : - student_data < [studentID, x, y] >
+    in : - X < [studentID, x, y] >
          - max_num_clusters
     out: - output scores for different #clusters
 """

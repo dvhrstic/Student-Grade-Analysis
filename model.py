@@ -170,6 +170,7 @@ class Model():
 		x = np.arange(6)
 		# red, orange, dark yellow, bright yellow, green-yellow, green
 		colors = ['#FF3333', '#FF8033', '#FFC133', '#FCFF33', '#BEFF33', '#42FF33']
+		tot_grades = np.zeros(6)
 		grade_intervals = [[0, 3], [4, 9], [10, 13] , [14, 15], [16, 17], [18, 20]]
 		for i in range(number_clusters):
 			file_name = "student_data/students-cluster-" + str(i+1) + ".csv"
@@ -180,13 +181,22 @@ class Model():
 			for j,inter in enumerate(grade_intervals):
 				grades[j] = len(np.where((student_grades >= inter[0]) & \
 							   (student_grades <= inter[1])) [0])
+			tot_grades += grades
 			plt.title('The distribution of grades for cluster ' + str(i))
 			plt.xlabel('Grades')
 			plt.ylabel('Number of students')
 			plt.bar(x, grades, color=colors)
 			plt.xticks(x, ('Poor', 'Weak', 'Sufficient', 'Good', 'Very Good', 'Excellent'))
-			plt.savefig('Plots/grades_cluster_' + str(i) + '.png')
+			plt.savefig('Plots/grades_cluster_' + str(i + 1) + '.png')
 			plt.close()
+
+		plt.title('The distribution of grades for all students')
+		plt.xlabel('Grades')
+		plt.ylabel('Number of students')
+		plt.bar(x, tot_grades, color=colors)
+		plt.xticks(x, ('Poor', 'Weak', 'Sufficient', 'Good', 'Very Good', 'Excellent'))
+		plt.savefig("Plots/tot_grades.png")
+		plt.close()
 
 
 		

@@ -32,11 +32,9 @@ def read_data(file):
 
 	# decode_numeric(new_data, labels, label_map)
 	file_name = file[:-4]
-	# f = open("Student_data/" + file_name + ".bin","wb")
-	# np.save(f, new_data)
+	f = open("Student_data/" + file_name + ".bin","wb")
+	np.save(f, new_data)
 
-	f = open("Student_data/" + file_name + ".bin","rb")
-	X = np.load(f)
 
 	return new_data
 
@@ -63,6 +61,6 @@ def decode_numeric(data, labels, label_map, print_data=False, save_data=False, f
 		else:		
 			print(df_data)
 
-read_data('student-mat.csv')
+read_data('student-por.csv')
 
 

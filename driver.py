@@ -7,25 +7,28 @@ import seaborn as sns; sns.set()
 import onehot_ecoding as one
 import sys
 
-def driver(user):
-	if (user == 1):
-		f = open("Student_data/student-mat.bin","rb")
-		X = np.load(f)
-
+def driver(user, file):
+	if (file == 1):
+		file_name = "student-por"
 	else:
-		df = one.read_data('student_data/student-mat.csv')
+		file_name = "student-mat"
+
+	if (user == 1):
+		f = open("Student_data/"+ file_name +".bin","rb")
+		X = np.load(f)
+	else:
+		df = one.read_data('student_data/'+ file_name +'.csv')
 		X, values_per_column = one.raw_to_binary(df)
 		R = one.binary_to_raw(X, values_per_column)
 		one.validate_encoding(R, df)
 
 	# Remove the columns with grades
 	X = X[:, :-3]
-	layer_dim = [12,12,X.shape[1]]
 
 	# som = SOM.SOMNetwork(layer_dim, epochs=500)
 	mod = Mod.Model()
 
-	mod.reduce_dim(X, [12,12], 2000)
+	mod.reduce_dim(X, [12,12], 200)
 
 	f = open("Student_data/student2D.bin","rb")
 	# [studentID, x, y]
@@ -46,4 +49,4 @@ def driver(user):
 	mod.plot_grades(opt_clusters)
 
 if __name__ == '__main__':
-	driver(int(sys.argv[1]))
+	driver(int(sys.argv[1]), int(sys.argv[2]))

@@ -165,30 +165,19 @@ class Model():
 			grid[d[1]][d[2]] += 1
 
 		return grid
-	def plot_grades(self, number_clusters):
+	def plot_grades(self, number_clusters, filename):
 
-		x = np.arange(6)
+		grade_intervals = [[0, 3], [4, 9], [10, 13] , [14, 15], [16, 17], [18, 20]]
 		# red, orange, dark yellow, bright yellow, green-yellow, green
 		colors = ['#FF3333', '#FF8033', '#FFC133', '#FCFF33', '#BEFF33', '#42FF33']
-		tot_grades = np.zeros(6)
-		grade_intervals = [[0, 3], [4, 9], [10, 13] , [14, 15], [16, 17], [18, 20]]
-		for i in range(number_clusters):
-			file_name = "student_data/students-cluster-" + str(i+1) + ".csv"
-			
-			student_data = pd.read_csv(file_name, sep=";")
-			student_grades = np.asarray(student_data["G3"])
-			grades = np.zeros(len(grade_intervals), dtype=int)
-			for j,inter in enumerate(grade_intervals):
-				grades[j] = len(np.where((student_grades >= inter[0]) & \
-							   (student_grades <= inter[1])) [0])
-			tot_grades += grades
-			plt.title('The distribution of grades for cluster ' + str(i))
-			plt.xlabel('Grades')
-			plt.ylabel('Number of students')
-			plt.bar(x, grades, color=colors)
-			plt.xticks(x, ('Poor', 'Weak', 'Sufficient', 'Good', 'Very Good', 'Excellent'))
-			plt.savefig('Plots/grades_cluster_' + str(i + 1) + '.png')
-			plt.close()
+		x = np.arange(6)
+
+		tot_student_data = pd.read_csv(filename, sep=";")
+		tot_student_grades = np.asarray(tot_student_data["G3"])
+		tot_grades = np.zeros(len(grade_intervals), dtype=int)
+		for j,inter in enumerate(grade_intervals):
+			tot_grades[j] = len(np.where((tot_student_grades >= inter[0]) & \
+						   (tot_student_grades <= inter[1])) [0])
 
 		plt.title('The distribution of grades for all students')
 		plt.xlabel('Grades')
@@ -197,6 +186,28 @@ class Model():
 		plt.xticks(x, ('Poor', 'Weak', 'Sufficient', 'Good', 'Very Good', 'Excellent'))
 		plt.savefig("Plots/tot_grades.png")
 		plt.close()
+
+		for i in range(number_clusters):
+			file_name = "student_data/students-cluster-" + str(i+1) + ".csv"
+			
+			student_data = pd.read_csv(file_name, sep=";")
+			student_grades = np.asarray(student_data["G3"])
+			print("num students in cluster ", i, " : ", len(student_grades))
+			grades = np.zeros(len(grade_intervals), dtype=int)
+			for j,inter in enumerate(grade_intervals):
+				grades[j] = len(np.where((student_grades >= inter[0]) & \
+							   (student_grades <= inter[1])) [0])
+
+			plt.title('The distribution of grades for cluster ' + str(i + 1))
+			plt.xlabel('Grades')
+			plt.ylabel('Percentage of students')
+			plt.bar(x, (grades/tot_grades)*100, color=colors)
+			plt.xticks(x, ('Poor', 'Weak', 'Sufficient', 'Good', 'Very Good', 'Excellent'))
+			x1,x2,y1,y2 = plt.axis()
+			plt.axis((x1,x2,0,100))
+			plt.gca().set_yticklabels(['{:.0f}%'.format(x) for x in plt.gca().get_yticks()])
+			plt.savefig('Plots/grades_cluster_' + str(i + 1) + '.png')
+			plt.close()
 
 
 		

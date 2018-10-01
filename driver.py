@@ -14,7 +14,7 @@ def driver(user, file):
 		file_name = "student-mat"
 
 	if (user == 1):
-		f = open("Student_data/"+ file_name +".bin","rb")
+		f = open("student_data/"+ file_name +".bin","rb")
 		X = np.load(f)
 	else:
 		df = one.read_data('student_data/'+ file_name +'.csv')
@@ -29,7 +29,7 @@ def driver(user, file):
 
 	mod.reduce_dim(X, [12,12], 200)
 
-	f = open("Student_data/student2D.bin","rb")
+	f = open("student_data/student2D.bin","rb")
 	# [studentID, x, y]
 	student_2d = np.load(f)
 
@@ -42,8 +42,8 @@ def driver(user, file):
 	student_cluster_data = mod.kmeans_training(student_2d, opt_clusters)
 	mod.plot_clusters(student_cluster_data, opt_clusters)
 
-	mod.save_clusters_csv(student_cluster_data, opt_clusters, 'student-mat.csv')
-	mod.plot_grades(opt_clusters)
+	mod.save_clusters_csv(student_cluster_data, opt_clusters, file_name + '.csv')
+	mod.plot_grades(opt_clusters, 'student_data/' + file_name + '.csv')
 
 if __name__ == '__main__':
 	driver(int(sys.argv[1]), int(sys.argv[2]))

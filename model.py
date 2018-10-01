@@ -27,11 +27,11 @@ class Model():
 		grid = self.create_grid(result, layer_dim)
 
 		ax = sns.heatmap(grid, annot=False, fmt="d")
-		plt.savefig("noNum.png")
+		plt.savefig("Plots/heatmap_noNum.png")
 		plt.close()
 
 		ax = sns.heatmap(grid, annot=True, fmt="d")
-		plt.savefig("withNum.png")
+		plt.savefig("Plots/heatmap_withNum.png")
 		plt.close()
 
 		f = open("Student_data/student2D.bin","wb")
@@ -185,7 +185,7 @@ class Model():
 			plt.ylabel('Number of students')
 			plt.bar(x, grades, color=colors)
 			plt.xticks(x, ('Poor', 'Weak', 'Sufficient', 'Good', 'Very Good', 'Excellent'))
-			plt.savefig('grades_cluster_' + str(i) + '.png')
+			plt.savefig('Plots/grades_cluster_' + str(i) + '.png')
 			plt.close()
 
 

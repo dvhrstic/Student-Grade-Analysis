@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import som as SOM
 import model as Mod
 import seaborn as sns; sns.set()
-import onehot_ecoding as one
+import dataPreprocessing.onehot_ecoding as one
 import sys
 
 def driver(user, file):

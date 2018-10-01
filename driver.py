@@ -25,7 +25,7 @@ def driver(user):
 	# som = SOM.SOMNetwork(layer_dim, epochs=500)
 	mod = Mod.Model()
 
-	mod.reduce_dim(X, [12,12], 500)
+	mod.reduce_dim(X, [12,12], 2000)
 
 	f = open("Student_data/student2D.bin","rb")
 	# [studentID, x, y]

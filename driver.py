@@ -25,7 +25,6 @@ def driver(user, file):
 	# Remove the columns with grades
 	X = X[:, :-3]
 
-	# som = SOM.SOMNetwork(layer_dim, epochs=500)
 	mod = Mod.Model()
 
 	mod.reduce_dim(X, [12,12], 200)
@@ -33,8 +32,6 @@ def driver(user, file):
 	f = open("Student_data/student2D.bin","rb")
 	# [studentID, x, y]
 	student_2d = np.load(f)
-	# print(student_2d.shape)
-	# mod.plot_student2D(student_2d)
 
 	mod.elbow_method(student_2d, 10)
 	

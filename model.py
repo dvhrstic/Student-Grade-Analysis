@@ -125,8 +125,12 @@ class Model():
 			y_pos = cluster.T[2]
 			plt.plot(x_pos, y_pos, colors[i],linestyle='None',marker='o', label='Cluster ' + str(i + 1))
 
-		plt.legend(loc='upper left')
+		ax = plt.subplot(111)
+		box = ax.get_position()
+		ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+		plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 		plt.savefig('Plots/clustered_data.png')
+		plt.close()
 
 	def save_clusters_csv(self, student_data, num_clusters, file):
 		"""Save the student data cluster wise for further analysis
@@ -161,3 +165,31 @@ class Model():
 			grid[d[1]][d[2]] += 1
 
 		return grid
+	def plot_grades(self, number_clusters):
+
+		x = np.arange(6)
+		# red, orange, dark yellow, bright yellow, green-yellow, green
+		colors = ['#FF3333', '#FF8033', '#FFC133', '#FCFF33', '#BEFF33', '#42FF33']
+		grade_intervals = [[0, 3], [4, 9], [10, 13] , [14, 15], [16, 17], [18, 20]]
+		for i in range(number_clusters):
+			file_name = "student_data/students-cluster-" + str(i+1) + ".csv"
+			
+			student_data = pd.read_csv(file_name, sep=";")
+			student_grades = np.asarray(student_data["G3"])
+			grades = np.zeros(len(grade_intervals), dtype=int)
+			for j,inter in enumerate(grade_intervals):
+				grades[j] = len(np.where((student_grades >= inter[0]) & \
+							   (student_grades <= inter[1])) [0])
+			plt.title('The distribution of grades for cluster ' + str(i))
+			plt.xlabel('Grades')
+			plt.ylabel('Number of students')
+			plt.bar(x, grades, color=colors)
+			plt.xticks(x, ('Poor', 'Weak', 'Sufficient', 'Good', 'Very Good', 'Excellent'))
+			plt.savefig('grades_cluster_' + str(i) + '.png')
+			plt.close()
+
+
+		
+
+		
+

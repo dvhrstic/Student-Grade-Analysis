@@ -40,17 +40,14 @@ def raw_to_binary(df):
     return B, values_per_column
 
 def binary_to_raw(B, values_per_column):
-    print(len(B[0]))
-    R = np.zeros(B.shape,dtype=int)
+    R = np.zeros( (B.shape[0],len(values_per_column) ),dtype=object)
     for i, row in enumerate(B):
         bin_matrix_index = 0
         for j, col in enumerate(values_per_column):
-            
-            print(values_per_column)
             value_location = np.where(B[i][bin_matrix_index: bin_matrix_index + len(values_per_column[j])] > 0)[0][0]
             column_value = values_per_column[j][value_location]
             R[i][j] = column_value    
-            matrix_index += len(values_per_column[j])    
+            bin_matrix_index += len(values_per_column[j])    
     return R        
 
 def validate_encoding(R, df):

@@ -2,10 +2,10 @@ import numpy as np
 import random
 import matplotlib
 import matplotlib.pyplot as plt
-np.random.seed(9)
+np.random.seed(26)
 
 class SOMNetwork:
-	def __init__(self, layers_dim, epochs=1000, radius=8):
+	def __init__(self, layers_dim, epochs=1000, radius=1):
 		super(SOMNetwork, self).__init__()
 		self.learning_rate = 0.2
 		self.W = self.generate_weight(layers_dim)
@@ -120,7 +120,7 @@ class SOMNetwork:
 
 				for n in neighbourhood:
 					self.W[n[0]][n[1]] += self.learning_rate*np.subtract(x, self.W[n[0]][n[1]])
-			if(epoch % 70 == 0 and epoch != 0):
+			if(epoch % 80 == 0 and epoch != 0):
 				self.radius -= 1
 			#self.decay_learning_rate(epoch)
 			#self.decay_radius(epoch)

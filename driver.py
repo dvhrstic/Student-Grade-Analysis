@@ -24,16 +24,18 @@ def driver(user, file):
 
 	# Remove the columns with grades
 	X = X[:, :-3]
+	# Familly related
+	X = np.concatenate((X[:,4:12], X[:,17:18]), axis=1)
 
 	mod = Mod.Model()
 
-	mod.reduce_dim(X, [20,20], 5, file_name)
+	mod.reduce_dim(X, [20,20], 100, file_name)
 
 	f = open("student_data/"+ file_name +"/student2D.bin","rb")
 	# [studentID, x, y]
 	student_2d = np.load(f)
 
-	mod.elbow_method(student_2d, 10)
+	mod.elbow_method(student_2d, 12)
 	
 	opt_clusters = int(input('Optimal number of cluster acc to the graph: '))
 	plt.close()

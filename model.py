@@ -8,7 +8,7 @@ import seaborn as sns; sns.set()
 
 class Model():
 
-	def reduce_dim(self, data, grid_size, epochs):
+	def reduce_dim(self, data, grid_size, epochs, file):
 		"""Reduce the input to 2D using SOM
 			Parameters
 			----------
@@ -27,14 +27,14 @@ class Model():
 		grid = self.create_grid(result, layer_dim)
 
 		ax = sns.heatmap(grid, annot=False, fmt="d")
-		plt.savefig("Plots/heatmap_noNum.png")
+		plt.savefig("Plots/" + file + "/heatmap_noNum.png")
 		plt.close()
 
 		ax = sns.heatmap(grid, annot=True, fmt="d")
-		plt.savefig("Plots/heatmap_withNum.png")
+		plt.savefig("Plots/" + file + "/heatmap_withNum.png")
 		plt.close()
 
-		f = open("Student_data/student2D.bin","wb")
+		f = open("Student_data/" + file + "/student2D.bin","wb")
 		np.save(f, result)
 
 	def plot_student2D(self, student_data):
@@ -98,7 +98,7 @@ class Model():
 	# 		plt.plot(x_values, y_values, colors[i])
 	# 	plt.show()
 
-	def plot_clusters(self, student_data, num_clusters):
+	def plot_clusters(self, student_data, num_clusters, file):
 		"""Plot the clsuters in different colours
 			----------
 			student_data: array [studentID, x, y, clusterID]
@@ -129,7 +129,7 @@ class Model():
 		box = ax.get_position()
 		ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
 		plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-		plt.savefig('Plots/clustered_data.png')
+		plt.savefig('Plots/' + file + '/clustered_data.png')
 		plt.close()
 
 	def save_clusters_csv(self, student_data, num_clusters, file):
@@ -143,9 +143,9 @@ class Model():
 				name of the file (either student-mat or student-por in this case)
 		"""
 		directory = 'student_data/'
-		file = file
+		file_name = file + '.csv'
 
-		path = directory + file
+		path = directory + file_name
 
 		# read the csv as a Pandas df
 		df_students = pd.read_csv(filepath_or_buffer = path, sep = ';')
@@ -153,7 +153,7 @@ class Model():
 		for i in range(num_clusters):
 			cluster = student_data[student_data[:,3] == i]
 			df_stud_clust = df_students.loc[cluster[:,0]]
-			df_stud_clust.to_csv(path_or_buf='student_data/students-cluster-' + str(i + 1) + '.csv', sep=';')
+			df_stud_clust.to_csv(path_or_buf='student_data/' + file + '/students-cluster-' + str(i + 1) + '.csv', sep=';')
 
 	def create_grid(self, data, dim):
 		rows = dim[0]
@@ -165,14 +165,15 @@ class Model():
 			grid[d[1]][d[2]] += 1
 
 		return grid
+
 	def plot_grades(self, number_clusters, filename):
 
 		grade_intervals = [[0, 3], [4, 9], [10, 13] , [14, 15], [16, 17], [18, 20]]
 		# red, orange, dark yellow, bright yellow, green-yellow, green
 		colors = ['#FF3333', '#FF8033', '#FFC133', '#FCFF33', '#BEFF33', '#42FF33']
 		x = np.arange(6)
-
-		tot_student_data = pd.read_csv(filename, sep=";")
+		file_path = 'student_data/' + filename + '.csv'
+		tot_student_data = pd.read_csv(file_path, sep=";")
 		tot_student_grades = np.asarray(tot_student_data["G3"])
 		tot_grades = np.zeros(len(grade_intervals), dtype=int)
 		for j,inter in enumerate(grade_intervals):
@@ -184,15 +185,15 @@ class Model():
 		plt.ylabel('Number of students')
 		plt.bar(x, tot_grades, color=colors)
 		plt.xticks(x, ('Poor', 'Weak', 'Sufficient', 'Good', 'Very Good', 'Excellent'))
-		plt.savefig("Plots/tot_grades.png")
+		plt.savefig('Plots/' + filename + '/tot_grades.png')
 		plt.close()
 
 		for i in range(number_clusters):
-			file_name = "student_data/students-cluster-" + str(i+1) + ".csv"
-			
+			file_name = "student_data/" + filename + "/students-cluster-" + str(i+1) + ".csv"
+
 			student_data = pd.read_csv(file_name, sep=";")
 			student_grades = np.asarray(student_data["G3"])
-			print("num students in cluster ", i, " : ", len(student_grades))
+			print("num students in cluster ", i + 1, " : ", len(student_grades))
 			grades = np.zeros(len(grade_intervals), dtype=int)
 			for j,inter in enumerate(grade_intervals):
 				grades[j] = len(np.where((student_grades >= inter[0]) & \
@@ -206,11 +207,34 @@ class Model():
 			x1,x2,y1,y2 = plt.axis()
 			plt.axis((x1,x2,0,100))
 			plt.gca().set_yticklabels(['{:.0f}%'.format(x) for x in plt.gca().get_yticks()])
-			plt.savefig('Plots/grades_cluster_' + str(i + 1) + '.png')
+			plt.savefig('Plots/' + filename + '/grades_cluster_' + str(i + 1) + '.png')
 			plt.close()
 
+	def get_variance(self, number_clusters, file, num_cols):
 
-		
+		variance_data = np.zeros((num_cols, number_clusters))
+		df_columns = []
 
-		
+		for i in range(number_clusters):
+			df_columns.append('Cluster ' + str(i + 1))
+			file_name = "student_data/" + file + "/students-cluster-" + str(i+1) + ".csv"
+			student_data = pd.read_csv(file_name, sep=";")
+
+			for j, column in enumerate(student_data.columns.values[1:-3]):
+				print(i + 1, column)
+				student_column = student_data[column]
+				unique_values = np.unique(student_column)
+				num_unique = len(unique_values)
+				norm_values = np.linspace(0, 1, num_unique)
+
+				for k in range(num_unique):
+					student_column[student_column == unique_values[k]] = norm_values[k]
+
+				std = np.std(student_column)
+
+				variance_data[j][i] = std
+
+		df_var = pd.DataFrame(data=variance_data, columns=df_columns, index=student_data.columns.values[1:-3])
+		df_var.to_csv(path_or_buf='student_data/' + file + '/feature_variance.csv', sep=';')
+		print(df_var)
 

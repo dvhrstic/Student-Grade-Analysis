@@ -27,9 +27,9 @@ def driver(user, file):
 
 	mod = Mod.Model()
 
-	mod.reduce_dim(X, [12,12], 200)
+	mod.reduce_dim(X, [20,20], 5, file_name)
 
-	f = open("student_data/student2D.bin","rb")
+	f = open("student_data/"+ file_name +"/student2D.bin","rb")
 	# [studentID, x, y]
 	student_2d = np.load(f)
 
@@ -40,10 +40,11 @@ def driver(user, file):
 
 	# [studentID, x, y, clsuterID]
 	student_cluster_data = mod.kmeans_training(student_2d, opt_clusters)
-	mod.plot_clusters(student_cluster_data, opt_clusters)
+	mod.plot_clusters(student_cluster_data, opt_clusters, file_name)
 
-	mod.save_clusters_csv(student_cluster_data, opt_clusters, file_name + '.csv')
-	mod.plot_grades(opt_clusters, 'student_data/' + file_name + '.csv')
+	mod.save_clusters_csv(student_cluster_data, opt_clusters, file_name)
+	mod.plot_grades(opt_clusters, file_name)
+	mod.get_variance(opt_clusters, file_name, 30)
 
 if __name__ == '__main__':
 	driver(int(sys.argv[1]), int(sys.argv[2]))

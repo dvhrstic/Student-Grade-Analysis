@@ -221,7 +221,6 @@ class Model():
 			student_data = pd.read_csv(file_name, sep=";")
 
 			for j, column in enumerate(student_data.columns.values[1:-3]):
-				print(i + 1, column)
 				student_column = student_data[column]
 				unique_values = np.unique(student_column)
 				num_unique = len(unique_values)
@@ -238,3 +237,58 @@ class Model():
 		df_var.to_csv(path_or_buf='student_data/' + file + '/feature_variance.csv', sep=';')
 		print(df_var)
 
+	def plot_features(self, num_clusters, file):
+
+		colors = ['#E69F00', '#56B4E9', '#F0E442', '#009E73', '#D55E00', '#D57800']
+
+		feature = str(input("Enter the feature to plot: "))
+		names = []
+		feature_data = []
+
+		file_name = "student_data/" + file + ".csv"
+		student_data = pd.read_csv(file_name, sep=";")
+		student_column = student_data[feature]
+		unique_values = np.unique(student_column)
+		num_unique = len(unique_values)
+
+		for i in range(num_clusters):
+			names.append("Cluster " + str(i + 1))
+			file_name = "student_data/" + file + "/students-cluster-" + str(i+1) + ".csv"
+			student_data = pd.read_csv(file_name, sep=";")
+			student_column = np.array(student_data[feature])
+			# temp_feat_cnt = np.zeros(num_unique, dtype=int)
+
+			# for j in range(num_unique):
+			# 	temp_feat_cnt[j] = len(student_column[student_column == unique_values[j]])
+
+			feature_data.append(student_column)
+
+		# Make the histogram using a list of lists
+		# Normalize the flights and assign colors and names
+		if(isinstance(feature_data[0][0], str)):
+			print("not numb", type(feature_data[0][0]))
+			end = num_unique - 0.75
+			bins = np.arange(-0.25, end + 0.25, 0.5)
+			x_ticks = np.arange(num_unique)
+		else:
+			print("numb", type(feature_data[0][0]))
+			start = np.min(unique_values)
+			end = np.max(unique_values)
+			bins = np.arange(start - 0.25, end + 0.25, 0.5)
+			x_ticks = np.arange(start, end, 1)
+
+		print(bins)
+		hej = plt.hist(feature_data, bins = bins, stacked=True, color = colors[:num_clusters], label=names)
+		print(hej)
+		print(feature_data)
+		# Plot formatting
+		plt.legend(ncol=1)
+		#plt.ylim((0,200))
+		plt.xlabel(feature)
+		plt.ylabel('Number of students')
+		plt.xticks(x_ticks, unique_values)
+		plt.title("Stacked histogram for feature: " + feature)
+		plt.show()
+
+mod = Model()
+mod.plot_features(4, 'student-por')

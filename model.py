@@ -290,5 +290,5 @@ class Model():
 		plt.title("Stacked histogram for feature: " + feature)
 		plt.show()
 
-mod = Model()
-mod.plot_features(4, 'student-por')
+# mod = Model()
+# mod.plot_features(4, 'student-por')
